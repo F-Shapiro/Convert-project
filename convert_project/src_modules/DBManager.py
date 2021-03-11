@@ -1,9 +1,9 @@
 # DBManager.py
-import configparser
+from configparser import ConfigParser
 import mariadb
 import sys
 
-config = configparser.ConfigParser()
+config = ConfigParser()
 config.read("config.ini")
 
 class DBManager:
