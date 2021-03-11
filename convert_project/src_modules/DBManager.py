@@ -34,10 +34,10 @@ class DBManager:
         
         self.__cursor = self.__db_connect.cursor()
 
-    def getRecord(self):
+    def getRecords(self):
         self.__cursor.execute(
             f'''SELECT id, title_img FROM products
-            WHERE title_img IS NOT NULL AND title_img LIKE 'http:%'
+            WHERE title_img IS NOT NULL AND title_img LIKE 'http%'
             LIMIT {self.__step_limit}'''
         )
         self.__current_number_of_record += self.__step_limit
@@ -45,6 +45,8 @@ class DBManager:
         print('Total Row(s):', self.__cursor.rowcount)
         for row in rows:
             print(row)
+        return rows
 
     def __del__(self):
         self.__cursor.close()
+        self.__db_connect.close()
