@@ -36,7 +36,9 @@ class DBManager:
 
     def getRecord(self):
         self.__cursor.execute(
-            f"SELECT id, title_img FROM products LIMIT {self.__step_limit}"
+            f'''SELECT id, title_img FROM products
+            WHERE title_img IS NOT NULL AND title_img REGEXP '^http:'
+            LIMIT {self.__step_limit}'''
         )
         self.__current_number_of_record += self.__step_limit
         rows = self.__cursor.fetchall()
