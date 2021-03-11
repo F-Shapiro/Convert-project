@@ -1,32 +1,48 @@
 # DBManager.py
+import configparser
 import mariadb
 import sys
 
+config = configparser.ConfigParser()
+config.read("config.ini")
+
 class DBManager:
-    def getRecord(self):
+    __connectParam = {
+        "user":"root",
+        "password":"",
+        "host":"localhost",
+        "port":3306,
+        "database":"products"
+    }
+    __step_limit = int(config["DBManager"]["step_limit"])
+    __total_number_of_record = int(config["DBManager"]["total_number_of_record"])
+    __current_number_of_record = 0
+
+    def __init__(self):
         try:
-            db_connect = mariadb.connect(
-                user="root",
-                password="",
-                host="localhost",
-                port=3306,
-                database="products"
+            self.__db_connect = mariadb.connect(
+                user = self.__connectParam["user"],
+                password = self.__connectParam["password"],
+                host = self.__connectParam["password"],
+                port = self.__connectParam["port"],
+                database = self.__connectParam["database"]
             )
-            print("connect successful")
+            print("Connect successful")
         except mariadb.Error as err:
             print(f"Error connecting to MariaDB Platform: {err}")
             sys.exit(1)
+        
+        self.__cursor = self.__db_connect.cursor()
 
-        cursor = db_connect.cursor()
-        cursor.execute(
-            "SELECT id, title_img FROM products LIMIT 7"
+    def getRecord(self):
+        self.__cursor.execute(
+            f"SELECT id, title_img FROM products LIMIT {self.__step_limit}"
         )
-
-        rows = cursor.fetchall()
-        print('Total Row(s):', cursor.rowcount)
+        self.__current_number_of_record += self.__step_limit
+        rows = self.__cursor.fetchall()
+        print('Total Row(s):', self.__cursor.rowcount)
         for row in rows:
             print(row)
-        # for (first_name, last_name) in cursor:
-        #     print(f"First Name: {first_name}, Last Name: {last_name}")
 
-        cursor.close()
+    def __del__(self):
+        self.__cursor.close()

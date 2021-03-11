@@ -1,9 +1,11 @@
 # main.py
 import configparser
-from src_modules import DBManager
+from src_modules.DBManager import DBManager
 
 def main():
-    pass
+    dbmanager = DBManager()
+    dbmanager.getRecord()
+    del dbmanager
 
 if __name__ == "__main__":
     main()
