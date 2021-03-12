@@ -11,8 +11,7 @@ class ImageManager:
     __path = os.getcwd() + "/temp_imgs"
     
     def __init__(self):
-        if int(config["ImageManager"]["import_new_imgs"]) == 1:
-            self.__path = config["ImageManager"]["new_imgs_directory"]
+        pass
 
     def downloadImage(self, listRecords):
         poolmanager = PoolManager()

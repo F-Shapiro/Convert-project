@@ -11,6 +11,7 @@ def main():
     imagemanager = ImageManager()
     imagemanager.downloadImage(dbmanager.getRecords())
     del dbmanager
+    del imagemanager
     print(time.ctime())
 
 if __name__ == "__main__":
