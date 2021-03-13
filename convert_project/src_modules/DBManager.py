@@ -7,7 +7,7 @@ config = ConfigParser()
 config.read("config.ini")
 
 class DBManager:
-    __connectParam = {
+    __connect_param = {
         "user": "",
         "password": "",
         "host": "",
@@ -22,11 +22,11 @@ class DBManager:
         self.__getConnectParam()
         try:
             self.__db_connect = mariadb.connect(
-                user = self.__connectParam["user"],
-                password = self.__connectParam["password"],
-                host = self.__connectParam["host"],
-                port = self.__connectParam["port"],
-                database = self.__connectParam["database"]
+                user = self.__connect_param["user"],
+                password = self.__connect_param["password"],
+                host = self.__connect_param["host"],
+                port = self.__connect_param["port"],
+                database = self.__connect_param["database"]
             )
             print("Connect successful")
         except mariadb.Error as err:
@@ -39,7 +39,7 @@ class DBManager:
         self.__cursor.execute(
             f'''SELECT id, title_img FROM products
             WHERE title_img IS NOT NULL AND title_img LIKE 'http%'
-            LIMIT {self.__step_limit}'''
+            LIMIT {self.__step_limit} OFFSET {self.__current_number_of_record}'''
         )
         self.__current_number_of_record += self.__step_limit
         rows = self.__cursor.fetchall()
@@ -49,16 +49,13 @@ class DBManager:
             print(row)
         
         return rows
-    
-    def __sortRecord(self):
-        pass
 
     def __getConnectParam(self):
-        self.__connectParam["user"] = config["connectParam"]["user"]
-        self.__connectParam["password"] = config["connectParam"]["password"]
-        self.__connectParam["host"] = config["connectParam"]["host"]
-        self.__connectParam["port"] = int(config["connectParam"]["port"])
-        self.__connectParam["database"] = config["connectParam"]["database"]
+        self.__connect_param["user"] = config["connect_param"]["user"]
+        self.__connect_param["password"] = config["connect_param"]["password"]
+        self.__connect_param["host"] = config["connect_param"]["host"]
+        self.__connect_param["port"] = int(config["connect_param"]["port"])
+        self.__connect_param["database"] = config["connect_param"]["database"]
 
     def __del__(self):
         self.__cursor.close()
