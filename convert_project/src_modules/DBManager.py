@@ -43,11 +43,6 @@ class DBManager:
         )
         self.__current_number_of_record += self.__step_limit
         rows = self.__cursor.fetchall()
-
-        print('Total Row(s):', self.__cursor.rowcount)
-        for row in rows:
-            print(row)
-        
         return rows
 
     def __getConnectParam(self):

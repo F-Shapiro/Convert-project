@@ -14,9 +14,9 @@ class ImageManager:
     def __init__(self):
         pass
 
-    def downloadImage(self, generator):
+    def downloadImage(self, listObject):
         poolmanager = PoolManager()
-        for item in generator:
+        for item in listObject:
             try:
                 req = poolmanager.request('GET', item.url)
                 extension = item.url[item.url.rfind("."):]

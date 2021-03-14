@@ -1,7 +1,7 @@
 # main.py
 from src_modules.DBManager import DBManager
 from src_modules.Image.ImageManager import ImageManager
-from src_modules.URLofId import StackURLofId
+from src_modules.URLId import ListURLId
 import time
 # from src_modules.Image import ImagePerformer
 # from src_modules.LogManager import
@@ -9,14 +9,11 @@ import time
 def main():
     print(time.ctime())
     dbmanager = DBManager()
-    stackurlofid = StackURLofId()
+    listurlid = ListURLId()
     imagemanager = ImageManager()
-    stackurlofid.updateList(dbmanager.getRecords())
-    # stackurlofid.show()
-    # imagemanager.downloadImage(stackurlofid.getGenerator())
-    del dbmanager
-    del stackurlofid
-    del imagemanager
+    listurlid.updateList(dbmanager.getRecords())
+    listurlid.show()
+    imagemanager.downloadImage(listurlid.getList())
     print(time.ctime())
 
 if __name__ == "__main__":
