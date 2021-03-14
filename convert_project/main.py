@@ -13,7 +13,8 @@ def main():
     imagemanager = ImageManager()
     listurlid.updateList(dbmanager.getRecords())
     listurlid.show()
-    imagemanager.downloadImage(listurlid.getList())
+    imagemanager.downloadImages(listurlid.getList())
+    imagemanager.relocateImages()
     print(time.ctime())
 
 if __name__ == "__main__":
