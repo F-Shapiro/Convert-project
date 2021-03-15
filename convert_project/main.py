@@ -9,12 +9,15 @@ import time
 def main():
     print(time.ctime())
     dbmanager = DBManager()
+    # dbmanager.dat()
     listurlid = ListURLId()
     imagemanager = ImageManager()
     listurlid.updateList(dbmanager.getRecords())
     listurlid.show()
     imagemanager.downloadImages(listurlid.getList())
-    imagemanager.relocateImages()
+    imagemanager.relocateImages(listurlid.getList())
+    listurlid.show()
+    dbmanager.updateData(listurlid.getList())
     print(time.ctime())
 
 if __name__ == "__main__":

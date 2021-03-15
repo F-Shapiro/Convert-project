@@ -14,15 +14,26 @@ class URLIdSaver:
     def url(self):
         return self.__url
     
+    @property
+    def path(self):
+        return self.__path
+    
+    def setPath(self, path):
+        self.__path = path
+    
     def addIdList(self, list_id_product):
         self.__id_list.extend(list_id_product)
 
     def getId(self):
         return self.__id_list[0]
     
+    def getIdList(self):
+        return self.__id_list
+    
     def show(self):
         print("item:")
         print(self.__url)
+        print(self.__path)
         for item in self.__id_list:
             print(item, end= " ")
         print()
