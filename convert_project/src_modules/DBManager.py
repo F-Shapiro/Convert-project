@@ -15,8 +15,8 @@ class DBManager:
         "database": ""
     }
     __step_limit = int(config["DBManager"]["step_limit"])
-    __total_number_of_record = int(config["DBManager"]["total_number_of_record"])
-    __current_number_of_record = 0
+    __total_number_record = int(config["DBManager"]["total_number_of_record"])
+    __current_number_record = 0
 
     def __init__(self):
         self.__getConnectParam()
@@ -34,16 +34,24 @@ class DBManager:
             sys.exit(1)
         
         self.__cursor = self.__db_connect.cursor()
+    
+    @property
+    def total_number_record(self):
+        return self.__total_number_record
+    
+    @property
+    def current_number_record(self):
+        return self.__current_number_record
 
     def getRecords(self):
         self.__cursor.execute(
             f'''
             SELECT id, title_img FROM {self.__connect_param["database"]}
             WHERE title_img IS NOT NULL AND title_img LIKE 'http%'
-            LIMIT {self.__step_limit} OFFSET {self.__current_number_of_record}
+            LIMIT {self.__step_limit} OFFSET {self.__current_number_record}
             '''
         )
-        self.__current_number_of_record += self.__step_limit
+        self.__current_number_record += self.__step_limit
         rows = self.__cursor.fetchall()
         return rows
     
@@ -56,15 +64,15 @@ class DBManager:
                         , item.getIdList())))
             , listObject))
         query = query.replace("strCase", strCase)
-        print(query)
+        # print(query)
         self.__cursor.execute(query)
         self.__db_connect.commit()
     
-    def dat(self):
-        self.__cursor.execute(
-            "UPDATE products SET title_img = 'https://i.ibb.co/QJy1syD/erck.png' WHERE title_img = '/var/www/shared_folder/convert_project/updated_imgs/251022'"
-        )
-        self.__db_connect.commit()
+    # def dat(self):
+    #     self.__cursor.execute(
+    #         "UPDATE products SET title_img = 'https://i.ibb.co/QJy1syD/erck.png' WHERE title_img = '/var/www/shared_folder/convert_project/updated_imgs/251022'"
+    #     )
+    #     self.__db_connect.commit()
 
     def __getConnectParam(self):
         self.__connect_param["user"] = config["connect_param"]["user"]

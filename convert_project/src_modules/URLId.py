@@ -2,17 +2,17 @@
 from itertools import groupby
 
 class URLIdSaver:
-    __url = ""
+    __URL = ""
     __path = ""
     __id_list = []
     
-    def __init__(self, url, list_id_product):
-        self.__url = url
+    def __init__(self, URL, list_id_product):
+        self.__URL = URL
         self.__id_list = list_id_product
     
     @property
-    def url(self):
-        return self.__url
+    def URL(self):
+        return self.__URL
     
     @property
     def path(self):
@@ -30,9 +30,12 @@ class URLIdSaver:
     def getIdList(self):
         return self.__id_list
     
+    def isDownload(self):
+        return True if len(self.__path) != 0 else False
+    
     def show(self):
         print("item:")
-        print(self.__url)
+        print(self.__URL)
         print(self.__path)
         for item in self.__id_list:
             print(item, end= " ")
@@ -44,22 +47,38 @@ class ListURLId:
     def __init__(self):
         pass
 
-    def addURLofIdSaver(self, urlidsaver):
+    def __addURLofIdSaver(self, urlidsaver):
         self.__list_urlofidsaver.append(urlidsaver)
     
     def updateList(self, listRecords):
-        for url, group in groupby(listRecords, lambda pair: pair[1]):
-            isExistURL, index = self.__checkExistURL(url)
-            if isExistURL:
-                self.__list_urlofidsaver[index].addIdList([id_product for id_product, _ in group])
-                continue
-            self.addURLofIdSaver(URLIdSaver(url, [id_product for id_product, _ in group]))
+        for URL, group in groupby(listRecords, lambda pair: pair[1]):
+            if self.__isIncorrectURL(URL):
+                self.__correctingURL(URL)
+
+            if self.__isExistURL(URL):
+                self.__list_urlofidsaver[self.__findByURL(URL)].addIdList([id_product for id_product, _ in group])
+            else:
+                self.__addURLofIdSaver(URLIdSaver(URL, [id_product for id_product, _ in group]))
         
-    def __checkExistURL(self, url):
+    def __isExistURL(self, URL):
         for item in self.__list_urlofidsaver:
-            if item.url == url:
-                return (True, self.__list_urlofidsaver.index(item))
-        return (False, -1)
+            if item.URL == URL:
+                return True
+        return False
+    
+    def __findByURL(self, URL):
+        for item in self.__list_urlofidsaver:
+            if item.URL == URL:
+                return self.__list_urlofidsaver.index(item)
+        return -1
+    
+    def __isIncorrectURL(self, URL):
+        if URL.find(" ") != -1:
+            return True
+        return False
+    
+    def __correctingURL(self, URL):
+        return URL[:URL.find(" ")]
 
     def getList(self):
         return self.__list_urlofidsaver
