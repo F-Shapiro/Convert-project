@@ -1,5 +1,7 @@
 # DBManager.py
 from configparser import ConfigParser
+from functools import reduce
+from operator import add
 import mariadb
 import sys
 
@@ -15,7 +17,7 @@ class DBManager:
         "database": ""
     }
     __step_limit = int(config["DBManager"]["step_limit"])
-    __total_number_record = int(config["DBManager"]["total_number_of_record"])
+    __total_number_record = int(config["DBManager"]["total_number_record"])
     __current_number_record = 0
 
     def __init__(self):
@@ -36,6 +38,10 @@ class DBManager:
         self.__cursor = self.__db_connect.cursor()
     
     @property
+    def step_limit(self):
+        return self.__step_limit
+    
+    @property
     def total_number_record(self):
         return self.__total_number_record
     
@@ -46,7 +52,7 @@ class DBManager:
     def getRecords(self):
         self.__cursor.execute(
             f'''
-            SELECT id, title_img FROM {self.__connect_param["database"]}
+            SELECT id, title_img FROM products
             WHERE title_img IS NOT NULL AND title_img LIKE 'http%'
             LIMIT {self.__step_limit} OFFSET {self.__current_number_record}
             '''
@@ -55,24 +61,28 @@ class DBManager:
         rows = self.__cursor.fetchall()
         return rows
     
-    def updateData(self, listObject):
-        query = f'''UPDATE {self.__connect_param["database"]} SET title_img = CASE id strCase ELSE title_img END'''
+    def updateData(self, listObject, logManager):
+        query = f'''UPDATE products SET title_img = CASE id strCase ELSE title_img END'''
         strCase = " ".join(
             map(lambda item:
             " ".join(list(map(lambda id_product:
                                 f"WHEN {id_product} THEN '{item.path}'"
-                        , item.getIdList())))
-            , listObject))
+                        , item.getNewIdList(reset=False))))
+            , listObject)).replace("  ", " ")
         query = query.replace("strCase", strCase)
-        # print(query)
-        self.__cursor.execute(query)
-        self.__db_connect.commit()
-    
-    # def dat(self):
-    #     self.__cursor.execute(
-    #         "UPDATE products SET title_img = 'https://i.ibb.co/QJy1syD/erck.png' WHERE title_img = '/var/www/shared_folder/convert_project/updated_imgs/251022'"
-    #     )
-    #     self.__db_connect.commit()
+        try:
+            self.__cursor.execute(query)
+            self.__db_connect.commit()
+            logManager.updateStep(reduce(add, map(lambda item: len(item.getNewIdList()), listObject)), 3)
+        except mariadb.Error as err:
+            print(f"Error updating to MariaDB Platform: {err}")
+            idError = " ".join(
+                map(lambda item:
+                " ".join(list(map(lambda id_product:
+                                    f"{id_product}"
+                            , item.getNewIdList())))
+                , listObject))
+            logManager.writeFault(idError)
 
     def __getConnectParam(self):
         self.__connect_param["user"] = config["connect_param"]["user"]

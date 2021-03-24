@@ -1,17 +1,13 @@
 # ImageManager.py
-from configparser import ConfigParser
 from urllib3.poolmanager import PoolManager
 import shutil
 import os
-
-config = ConfigParser()
-config.read("config.ini")
 
 class ImageManager:
     __path_temp_imgs = os.getcwd() + "/temp_imgs"
     __path_updated_imgs = os.getcwd() + "/updated_imgs"
 
-    def downloadImages(self, listObject):
+    def downloadImages(self, listObject, logManager):
         poolmanager = PoolManager()
         for item in listObject:
             if not item.isDownload():
@@ -22,9 +18,23 @@ class ImageManager:
                         img.write(req.data)
                 except Exception as err:
                     print(f"Download image fault: {err}")
+                    print(item.URL)
+                    logManager.writeFault(item.getId())
+        logManager.updateStep(len(os.listdir(self.__path_temp_imgs)), 1)
     
-    def relocateImages(self, listObject):
+    def relocateImages(self, listObject, logManager):
+        count_relocate = 0
         for img in os.listdir(self.__path_temp_imgs):
-            os.chmod(os.path.join(self.__path_temp_imgs, img), 0o0777)
-            shutil.move(os.path.join(self.__path_temp_imgs, img), self.__path_updated_imgs)
-        [item.setPath(self.__path_updated_imgs + f"/{item.getId()}") for item in listObject]
+            try:
+                os.chmod(os.path.join(self.__path_temp_imgs, img), 0o0777)
+                shutil.move(os.path.join(self.__path_temp_imgs, img), self.__path_updated_imgs)
+                count_relocate += 1
+            except OSError as err:
+                print(f"Relocate image fault: {err}")
+                logManager.writeFault(img[:img.rfind(".")])
+        for item in listObject:
+            if item.isDownload():
+                continue
+            if str(item.getId()) + item.URL[item.URL.rfind("."):] in os.listdir(self.__path_updated_imgs):
+                item.setPath(self.__path_updated_imgs + f"/{item.getId()}") 
+        logManager.updateStep(count_relocate, 2)

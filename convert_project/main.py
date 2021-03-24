@@ -2,25 +2,36 @@
 from src_modules.DBManager import DBManager
 from src_modules.Image.ImageManager import ImageManager
 from src_modules.URLId import ListURLId
-import time
 # from src_modules.Image import ImagePerformer
-# from src_modules.LogManager import
+from src_modules.LogManager import LogManager
+import datetime
+import time
 
 class Program:
     def __init__(self):
-        self.dbmanager = DBManager()
-        self.listurlid = ListURLId()
-        self.imagemanager = ImageManager()
+        self.dbManager = DBManager()
+        self.listUrlId = ListURLId()
+        self.imageManager = ImageManager()
+        self.logManager = LogManager(self.dbManager.total_number_record / self.dbManager.step_limit)
     
     def launch(self):
-        self.listurlid.updateList(self.dbmanager.getRecords())
-        self.imagemanager.downloadImages(self.listurlid.getList())
-        self.imagemanager.relocateImages(self.listurlid.getList())
-        self.listurlid.show()
-        self.dbmanager.updateData(self.listurlid.getList())
-        print(self.dbmanager.current_number_record,  self.dbmanager.total_number_record)
-        if self.dbmanager.current_number_record < self.dbmanager.total_number_record:
+        self.listUrlId.updateList(self.dbManager.getRecords())
+        self.logManager.updateStep(self.listUrlId.countNewId(), 0)
+        if self.listUrlId.countNewId() != 0:
+            self.imageManager.downloadImages(self.listUrlId.getList(), self.logManager)
+            self.imageManager.relocateImages(self.listUrlId.getList(), self.logManager)
+            # self.listUrlId.show()
+            self.dbManager.updateData(self.listUrlId.getList(), self.logManager)
+        print(self.dbManager.current_number_record,  self.dbManager.total_number_record)
+        if self.dbManager.current_number_record < self.dbManager.total_number_record:
+            self.logManager.addStepLog()
+            self.logManager.writeLog()
             self.launch()
+        else:
+            self.logManager.updateTotal(datetime.datetime.now().strftime("%H:%M:%S"), 5)
+            self.logManager.addStepLog()
+            self.logManager.addTotalLog()
+            self.logManager.writeLog()
 
 def main():
     print(time.ctime())
