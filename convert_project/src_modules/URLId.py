@@ -52,16 +52,12 @@ class ListURLId:
     
     def updateList(self, listRecords):
         for URL, group in groupby(listRecords, lambda pair: pair[1]):
-            print(URL)
             if self.__isTwiceURL(URL):
                 URL = self.__correctingURL(URL)
-
             if self.__isIncorrectURL(URL):
                 continue
-
             if self.__isIncorrectExtension(URL):
                 continue
-
             if self.__isExistURL(URL):
                 self.__list_urlIdSaver[self.__findByURL(URL)].addIdList([id_product for id_product, _ in group])
             else:

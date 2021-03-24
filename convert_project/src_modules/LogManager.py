@@ -8,16 +8,16 @@ class LogManager:
     __path = getcwd() + "/logs"
     __file_name = "load_log_" + datetime.datetime.today().strftime("%Y-%m-%d") + "_linux.xlsx"
     __dataframe = pandas.DataFrame({
-    'Найденно товаров для обновления':[],
-    'Скачанно':[],
-    # 'Преобразованно':[],
-    'Сохранены':[],
-    'Обновленно в базе':[],
-    'Ошибки для':[],
-    'Время конца выполнения':[]
+    'Найденно товаров для обновления':[], #0
+    'Скачанно':[], #1
+    'Преобразованно':[], #2
+    'Сохранены':[], #3
+    'Обновленно в базе':[], #4
+    'Ошибки для':[], #5
+    'Время конца выполнения':[] #6
     })
-    __step = [None for i in range(6)]
-    __total = [None for i in range(6)]
+    __step = [None for i in range(7)]
+    __total = [None for i in range(7)]
     __number_row = 2
     __writer_mode = 'w'
 
@@ -58,7 +58,7 @@ class LogManager:
     
     def addStepLog(self):
         self.__dataframe.loc[self.__indexes.pop(0)] = self.__step
-        self.__step = [None for i in range(6)]
+        self.__step = [None for i in range(7)]
     
     def addTotalLog(self):
         self.__dataframe.loc[self.__indexes.pop(0)] = self.__total

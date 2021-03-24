@@ -30,11 +30,10 @@ class DBManager:
                 port = self.__connect_param["port"],
                 database = self.__connect_param["database"]
             )
-            print("Connect successful")
+            # print("Connect successful")
         except mariadb.Error as err:
-            print(f"Error connecting to MariaDB Platform: {err}")
+            # print(f"Error connecting to MariaDB Platform: {err}")
             sys.exit(1)
-        
         self.__cursor = self.__db_connect.cursor()
     
     @property
@@ -73,9 +72,9 @@ class DBManager:
         try:
             self.__cursor.execute(query)
             self.__db_connect.commit()
-            logManager.updateStep(reduce(add, map(lambda item: len(item.getNewIdList()), listObject)), 3)
+            logManager.updateStep(reduce(add, map(lambda item: len(item.getNewIdList()), listObject)), 4)
         except mariadb.Error as err:
-            print(f"Error updating to MariaDB Platform: {err}")
+            # print(f"Error updating to MariaDB Platform: {err}")
             idError = " ".join(
                 map(lambda item:
                 " ".join(list(map(lambda id_product:
