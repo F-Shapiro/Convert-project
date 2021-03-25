@@ -8,3 +8,4 @@ Pillow 8.1.2;
 
 dependencies centos:
 libwebp-tools 0.3.0-7.el7;
+MariaDB-shared 10.3.28-1.el7.centos
