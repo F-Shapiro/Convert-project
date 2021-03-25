@@ -1,11 +1,15 @@
 # ImageManager.py
 from urllib3.poolmanager import PoolManager
+from configparser import ConfigParser
 import shutil
 import os
 
+config = ConfigParser()
+config.read("config.ini")
+
 class ImageManager:
-    __path_temp_imgs = os.getcwd() + "/temp_imgs"
-    __path_updated_imgs = os.getcwd() + "/updated_imgs"
+    __path_temp_imgs = os.getcwd() + config["path"]["path_temp"]
+    __path_updated_imgs = os.getcwd() + config["path"]["path_update"]
 
     def downloadImages(self, listObject, logManager):
         poolmanager = PoolManager()

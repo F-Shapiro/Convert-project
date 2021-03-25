@@ -9,7 +9,7 @@ config.read("config.ini")
 class ImagePerformer:
     __img_width_max = int(config["image_size"]["img_width_max"])
     __img_height_max = int(config["image_size"]["img_height_max"])
-    __path_temp_imgs = os.getcwd() + "/temp_imgs"
+    __path_temp_imgs = os.getcwd() + config["path"]["path_temp"]
 
     def convertImages(self, logManager):
         for img in os.listdir(self.__path_temp_imgs):
