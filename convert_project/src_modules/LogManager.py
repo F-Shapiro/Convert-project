@@ -1,16 +1,16 @@
 # LogManager.py
 from configparser import ConfigParser
-from os import getcwd
-import datetime
-import pandas
 import openpyxl
+import pandas
+import datetime
+import os
 
 config = ConfigParser()
 config.read("config.ini")
 
 class LogManager:
-    __path = getcwd() + config["path"]["path_log"]
-    __file_name = "load_log_" + datetime.datetime.today().strftime("%Y-%m-%d") + "_linux.xlsx"
+    __path = os.getcwd() + config["path"]["path_log"]
+    __file_name = "load_log_" + datetime.datetime.now().strftime("%d-%m-%Y-%H-%M-%S") + "_linux.xlsx"
     __dataframe = pandas.DataFrame({
     'Найденно товаров для обновления':[], #0
     'Скачанно':[], #1
@@ -31,6 +31,7 @@ class LogManager:
         self.__indexes.append("TOTAL")
 
     def writeLog(self):
+        os.chmod(self.__path, 0o0777)
         with pandas.ExcelWriter(self.__path + f"/{self.__file_name}", mode=self.__writer_mode) as writer:
             if self.__writer_mode == 'w':
                 self.__dataframe.to_excel(writer, sheet_name="convert_project")
