@@ -10,7 +10,7 @@ config.read("config.ini")
 
 class LogManager:
     __path = getcwd() + config["path"]["path_log"]
-    __file_name = "load_log_" + datetime.datetime.today().strftime("%Y-%m-%d_%H:%M:%S") + "_linux.xlsx"
+    __file_name = "load_log_" + datetime.datetime.today().strftime("%Y-%m-%d") + "_linux.xlsx"
     __dataframe = pandas.DataFrame({
     'Найденно товаров для обновления':[], #0
     'Скачанно':[], #1
