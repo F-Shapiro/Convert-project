@@ -1,4 +1,4 @@
-# BD-Script
+# Convert project
 A small script for the backend that processes images via links from the database with logging
 
 dependencies pip:
